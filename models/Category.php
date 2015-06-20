@@ -9,8 +9,11 @@ use Yii;
  *
  * @property string $category_id
  * @property string $category_name
- * @property string $category_slug
+ * @property string $category_image
  * @property string $category_description
+ * @property string $created_at
+ * @property string $updated_at
+ * @property boolean $deleted
  *
  * @property Posts[] $posts
  */
@@ -30,9 +33,14 @@ class Category extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['category_name', 'category_slug', 'category_description'], 'required'],
+            [['category_name'], 'required'],
             [['category_description'], 'string'],
-            [['category_name', 'category_slug'], 'string', 'max' => 255]
+            [['created_at'], 'safe'],
+            [['deleted'], 'boolean'],
+            [['category_name'], 'string', 'max' => 50],
+            [['category_image'], 'string', 'max' => 255],
+            [['category_name'], 'unique'],
+            [['category_image'], 'file', 'extensions' => 'jpg, gif, png'],
         ];
     }
 
@@ -44,8 +52,11 @@ class Category extends \yii\db\ActiveRecord
         return [
             'category_id' => 'Category ID',
             'category_name' => 'Category Name',
-            'category_slug' => 'Category Slug',
+            'category_image' => 'Category Image',
             'category_description' => 'Category Description',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'deleted' => 'Deleted',
         ];
     }
 

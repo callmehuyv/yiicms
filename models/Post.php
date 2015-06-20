@@ -8,16 +8,14 @@ use Yii;
  * This is the model class for table "posts".
  *
  * @property string $post_id
- * @property string $post_title
- * @property string $post_excerpt
- * @property string $post_detail
- * @property string $post_status
- * @property string $post_slug
- * @property string $post_thumbnail
- * @property string $user_id
+ * @property string $post_name
+ * @property string $post_content
+ * @property string $post_image
  * @property string $category_id
+ * @property string $created_at
+ * @property string $updated_at
+ * @property boolean $deleted
  *
- * @property Users $user
  * @property Categories $category
  */
 class Post extends \yii\db\ActiveRecord
@@ -36,12 +34,14 @@ class Post extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['post_title', 'post_excerpt', 'post_detail', 'post_status', 'post_slug', 'post_thumbnail', 'user_id', 'category_id'], 'required'],
-            [['post_detail'], 'string'],
-            [['user_id', 'category_id'], 'integer'],
-            [['post_title', 'post_excerpt', 'post_slug'], 'string', 'max' => 255],
-            [['post_status'], 'string', 'max' => 64],
-            [['post_thumbnail'], 'string', 'max' => 128]
+            [['post_name', 'category_id'], 'required'],
+            [['post_content'], 'string'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['deleted'], 'boolean'],
+            [['post_name'], 'string', 'max' => 50],
+            [['post_image'], 'file', 'extensions' => 'jpg, gif, png'],
+            ['post_name', 'unique'],
+            ['category_id', 'exist', 'targetClass' => '\app\models\Category', 'targetAttribute' => 'category_id']
         ];
     }
 
@@ -52,23 +52,14 @@ class Post extends \yii\db\ActiveRecord
     {
         return [
             'post_id' => 'Post ID',
-            'post_title' => 'Post Title',
-            'post_excerpt' => 'Post Excerpt',
-            'post_detail' => 'Post Detail',
-            'post_status' => 'Post Status',
-            'post_slug' => 'Post Slug',
-            'post_thumbnail' => 'Post Thumbnail',
-            'user_id' => 'User ID',
+            'post_name' => 'Post Name',
+            'post_content' => 'Post Content',
+            'post_image' => 'Post Image',
             'category_id' => 'Category ID',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'deleted' => 'Deleted',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUser()
-    {
-        return $this->hasOne(Users::className(), ['user_id' => 'user_id']);
     }
 
     /**
@@ -76,6 +67,6 @@ class Post extends \yii\db\ActiveRecord
      */
     public function getCategory()
     {
-        return $this->hasOne(Categories::className(), ['category_id' => 'category_id']);
+        return Category::find()->where(['deleted' => 0, 'category_id' => $this->category_id])->one();
     }
 }

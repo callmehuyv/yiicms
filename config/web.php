@@ -21,7 +21,6 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'rules' => [
-                'admin/category/create' => 'category/create'
             ],
             'showScriptName' => false
         ],
@@ -47,6 +46,7 @@ $config = [
         'db' => require(__DIR__ . '/db.php'),
     ],
     'params' => $params,
+    'timeZone' => 'Asia/Ho_Chi_Minh',
 ];
 
 if (YII_ENV_DEV) {
